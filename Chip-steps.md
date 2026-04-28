@@ -22,4 +22,4 @@ As mentioned beforehand, Chip-8 has 4KB of usuable memory for programs, howver i
 Memory is stored in 8 bit sections, same goes for the cpu registers with the exeption of special registers like BC and other "Combined registers". Chip-8 Opcode is 16bits or 2 bytes long, and must be read in two segments in the cpu. 
 
     Which leads to: opcodes = self.memory[self.pc] << 8 | self.memory[self.pc + 1]
-The first section of the memory address is shifted back 8 spaces to account and make room for the second segment which is needed to complete the Opcode.
+The first section of the memory address is shifted back 8 spaces to account and make room for the second segment which is needed to complete the Opcode..
