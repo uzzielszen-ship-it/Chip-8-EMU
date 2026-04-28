@@ -1,4 +1,5 @@
 
+# CHIP - 8 Learning Manual
 
 This will be a general collection of the steps current and future of the chip-8 emu and their implementations throughout the project process.
 
@@ -11,7 +12,7 @@ First and foremost the refences for the Project.
 
 ----------------------------------------------------------------------------------------------------
 
-CPU and MEMORY functions
+## CPU and MEMORY functions
 
 All the discussion of specific memory architecture and stack functions etc are made in refernce to the Chip-8 Technical Manual.
 
@@ -19,7 +20,25 @@ Chip-8's language is able to access up to 4KB of Random Acess Memory, denoted in
 
 As mentioned beforehand, Chip-8 has 4KB of usuable memory for programs, howver it should be known that the "stack" is seperate from this 4KB. The stack utilizes 16 "slots" each able to contain 16bit memory addresses which are used to read of instructions.
 
-Memory is stored in 8 bit sections, same goes for the cpu registers with the exeption of special registers like BC and other "Combined registers". Chip-8 Opcode is 16bits or 2 bytes long, and must be read in two segments in the cpu. 
+Memory is stored in 8 bit sections, same goes for the cpu registers with the exeption of a special register "I". Chip-8 Opcode is 16bits or 2 bytes long, and must be read in two segments in the cpu. 
 
     Which leads to: opcodes = self.memory[self.pc] << 8 | self.memory[self.pc + 1]
 The first section of the memory address is shifted back 8 spaces to account and make room for the second segment which is needed to complete the Opcode.
+
+## Understanding Opcodes
+
+Opcodes are comprised of 4 "nibbles" or 4 sections of 4 bytes. Opcodes are also written in Hexadecimal notation, take for example: 0x8120 .
+ 1) The first nibble 8 is refered to as the "Category" this defines the instruction type which in this case is arithmetic.
+
+ 2) The second nibble "1" is the "x", this represents the index of the first memory register (V1).
+
+ 3) The third nibble "2" is the "y", this represents the index of the second memory register (V2).
+
+ 4) The fourth nibble "0" is the "n", this represents the "Sub-code" which would tell you wich math problem to preform, for example 0x8120 means to set V1 = V2, whereas 0x8124 means to add V1 and V2 and the output is saved to the target register V1.
+
+Also an important distinction to make it that the category of the Opcode tells the cpu how to read the rest of it. Earlier we looked at the Opcode 0x8120, category 8 (Arithmetic) tells the cpu to set V1 represented by (1) to the value in v2 represented by (2). 
+Now if for example we had an Opcode with a different category such as 0x1125, the Cpu would read this as follows.
+    
+        0x1125 -> Jump to (1) -> Memory address 125. 
+The opcode is in the format 0x1NNN instead of 0x8XYN.
+
