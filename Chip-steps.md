@@ -42,3 +42,14 @@ Now if for example we had an Opcode with a different category such as 0x1125, th
         0x1125 -> Jump to (1) -> Memory address 125. 
 The opcode is in the format 0x1NNN instead of 0x8XYN.
 
+## Important Categories
+Some categories to take note of are the D, F, and A categories. These bridge the gap between the game's logic and the virtual hardware.
+
+Category A: Responsible for pointing the I register to a specific memory address. This tells the CPU where to look for data before it performs an action.
+
+Category D: The Draw category, responsible for putting sprites on the screen. It uses XOR logic, meaning it can both draw and "erase" pixels, which is how games detect collisions.
+
+Category F: A collection of essential instructions that handle everything from timers and keyboard input to math. Notably, it contains instructions like Fx29 that calculate the exact memory location of built-in font sprites.
+
+### More on 0xF33
+    The reasoning behind why we may need to break up a number such as 125 into segments is because Chip-8 lacks a print function. This means that it doesnt or would not be able to understand the number 125 as is, we must break it up into numbers 1, 2, and 5 which each have their sprites for being put on the screen located in memory.

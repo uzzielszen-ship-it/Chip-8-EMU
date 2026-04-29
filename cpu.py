@@ -22,6 +22,28 @@ class cpu ():
         self.display = [0] * (64 * 32)
         self.keypad = [0] * 16
 
+        # Font
+        font = [
+    0xF0, 0x90, 0x90, 0x90, 0xF0, # 0
+    0x20, 0x60, 0x20, 0x20, 0x70, # 1
+    0xF0, 0x10, 0xF0, 0x80, 0xF0, # 2
+    0xF0, 0x10, 0xF0, 0x10, 0xF0, # 3
+    0x90, 0x90, 0xF0, 0x10, 0x10, # 4
+    0xF0, 0x80, 0xF0, 0x10, 0xF0, # 5
+    0xF0, 0x80, 0xF0, 0x90, 0xF0, # 6
+    0xF0, 0x10, 0x20, 0x40, 0x40, # 7
+    0xF0, 0x90, 0xF0, 0x90, 0xF0, # 8
+    0xF0, 0x90, 0xF0, 0x10, 0xF0, # 9
+    0xF0, 0x90, 0xF0, 0x90, 0x90, # A
+    0xE0, 0x90, 0xE0, 0x90, 0xE0, # B
+    0xF0, 0x80, 0x80, 0x80, 0xF0, # C
+    0xE0, 0x90, 0x90, 0x90, 0xE0, # D
+    0xF0, 0x80, 0xF0, 0x80, 0xF0, # E
+    0xF0, 0x80, 0xF0, 0x80, 0x80  # F
+    ]
+        for i in range(len(font)):
+            self.memory[i] = font[i]
+
         # Class methods
     def cycle(self):
         # 1. fetch the Op-codes
@@ -60,6 +82,45 @@ class cpu ():
                 if self.sp > 0:
                     self.sp -= 1
                     self.pc = self.stack[self.sp]
+        
+        elif category == 0xF: # Misc category
+            if kk == 0x07:
+                self.V[x] = self.delay_timer
+            elif kk == 0x15:
+                self.delay_timer = self.V[x]
+            elif kk == 0x0A:
+                key_pressed = False
+                for k in range(16):     # sadly i wont write descriptions for each instruction...
+                    if self.keypad[k] == 1:
+                        self.V[x] = k
+                        key_pressed = True
+                        break
+                if key_pressed == False:
+                    self.pc -=2
+            elif kk == 0x18:
+                self.sound_timer = self.V[x]
+            elif kk == 0x1E:
+                self.I = (self.I + self.V[x])
+            elif kk == 0x29:
+                self.I = self.V[x] * 5
+            elif kk == 0x33:
+                value = self.V[x]
+                self.memory[self.I] = value // 100
+                self.memory[self.I + 1] = (value // 10) % 10
+                self.memory[self.I + 2] = (value) % 10
+            elif kk == 0x55:
+                for i in range(x + 1):
+                    self.memory[self.I + i] = self.V[i]
+            elif kk == 0x65:
+                for i in range(x+1):
+                    self.V[i] = self.memory[self.I + i]
+        
+        # 
+
+
+
+
+
         
             
             
