@@ -23,28 +23,46 @@ class cpu ():
         self.keypad = [0] * 16
 
         # Class methods
-        def cycle(self):
-            # 1. fetch the Op-codes
-            opcode = self.memory[self.pc] << 8 | self.memory[self.pc + 1]
+    def cycle(self):
+        # 1. fetch the Op-codes
+        opcode = self.memory[self.pc] << 8 | self.memory[self.pc + 1]
 
-            self.pc += 2
+        self.pc += 2
             
-            # Decode the op-codes
-            category = (opcode & 0xF000) >> 12 # Defines the category section of the Opcode.
-            x = (opcode & 0x0F00) >> 8 # Defines the target register
-            y = (opcode & 0x00F0) >> 4
-            kk = (opcode & 0x00FF)
-            n = (opcode & 0x000F)
-            nnn = (opcode & 0x0FFF)
+        # Decode the op-codes
+        category = (opcode & 0xF000) >> 12 # Defines the category section of the Opcode.
+        x = (opcode & 0x0F00) >> 8 # Defines the target register
+        y = (opcode & 0x00F0) >> 4
+        kk = (opcode & 0x00FF)
+        n = (opcode & 0x000F)
+        nnn = (opcode & 0x0FFF)
 
-            if category == 0x1: # Jumps to an address (NNN)
-                self.pc = nnn
+        if category == 0x1: # Jumps to an address (NNN)
+            self.pc = nnn 
             
-            if category == 0x6: # Set register to value (kk)
-                self.V[x] = kk
+        elif category == 0x6: # Set register to value (kk)
+            self.V[x] = kk
             
-            if category == 0x7: # Add value (kk) to register 
-                self.V[x] = (self.V[x] + kk) & 0xFF
+        elif category == 0x7: # Add value (kk) to register 
+            self.V[x] = (self.V[x] + kk) & 0xFF
+            
+        elif category == 0xA:
+            self.I = nnn
+        
+        elif category == 0x2:
+            # Call function
+            self.stack[self.sp] = self.pc # save the current position in memory to the stack
+            self.sp += 1 # increment the stack by 1
+            self.pc = nnn # move our position in memory to a memory adress nnn.
+        
+        elif category == 0x0:
+            if kk == 0xEE: # Return function
+                if self.sp > 0:
+                    self.sp -= 1
+                    self.pc = self.stack[self.sp]
+        
+            
+            
 
             
 
